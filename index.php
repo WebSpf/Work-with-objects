@@ -6,28 +6,31 @@ function workSchedule(int $year, int $month): void
     $startOfMonth = DateTime::createFromFormat('d-m-Y', "01-$month-$year");
     $endOfMonth = (clone $startOfMonth)->modify('last day of this month');
 
-    $dayCounter = 2;
+    $shiftCounter = 0;
 
-    while ($startOfMonth<= $endOfMonth) {
+    while ($startOfMonth <= $endOfMonth) {
         $formattedDate = $startOfMonth->format('d-m-Y');
         $dayOfWeek = $startOfMonth->format('N');
-        if ($dayOfWeek < 6) {
-            $dayCounter++;
-            if ($dayCounter % 3 === 0) {
+
+        if ($dayOfWeek >= 6) {
+            echo "Выходной день: \033[30m {$formattedDate} \033[0m" . PHP_EOL;
+            $shiftCounter = 0;
+        } else {
+            if ($shiftCounter === 0) {
                 echo "Рабочий день: \033[31m {$formattedDate} \033[0m" . PHP_EOL;
             } else {
                 echo "Нерабочий день: \033[32m {$formattedDate} \033[0m" . PHP_EOL;
             }
-        } else {
-            echo "Выходной день: \033[30m {$formattedDate} \033[0m" . PHP_EOL;
+            $shiftCounter = ($shiftCounter + 1) % 3;
         }
 
         $startOfMonth->modify('+1 day');
     }
 }
 
+
 $year = 2024;
-$month = 12;
+$month = 06;
 $monthRU = [
 	1  => 'январь',
 	2  => 'февраль',
